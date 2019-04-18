@@ -131,12 +131,22 @@ public class DynamoDBItemWritable implements Writable, Serializable {
     dynamoDBItem = gson.fromJson(itemJson, type);
   }
 
+  private void clearGlobalTableKeys() {
+    if (dynamoDBItem != null) {
+      dynamoDBItem.remove("aws:rep:deleting");
+      dynamoDBItem.remove("aws:rep:updatetime");
+      dynamoDBItem.remove("aws:rep:updateregion");
+    }
+  }
+
   public String writeStream() {
+    clearGlobalTableKeys();
     Gson gson = DynamoDBUtil.getGson();
     return gson.toJson(dynamoDBItem, type);
   }
 
   public Map<String, AttributeValue> getItem() {
+    clearGlobalTableKeys();
     return dynamoDBItem;
   }
 
